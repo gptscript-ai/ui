@@ -13,7 +13,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, macos-13]
+        os: [
+          macos-latest,
+          macos-13,
+          windows-latest
+        ]
 
     steps:
       - name: Checkout repository
@@ -28,6 +32,7 @@ jobs:
         run: npm install
 
       - name: Decode and save APPLE_API_KEY
+        if: runner.os == 'macOS'
         run: echo "${{ secrets.ELECTRON_APPLE_API_KEY }}" | base64 --decode > /tmp/apikey.p8
 
       - name: Build Electron app

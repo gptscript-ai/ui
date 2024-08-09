@@ -24,6 +24,11 @@ export const startAppServer = ({dev, hostname, port, dir}) => {
             return resolve(address);
         }
 
+        const gptscript = new GPTScript({
+            disableCache: process.env.DISABLE_CACHE === 'true',
+            defaultModelProvider: 'github.com/gptscript-ai/gateway-provider'
+        });
+
         const app = next({
             dev: dev,
             hostname: hostname,
@@ -37,7 +42,6 @@ export const startAppServer = ({dev, hostname, port, dir}) => {
         app.prepare().then(() => {
             const httpServer = createServer(handler);
             const io = new Server(httpServer);
-            const gptscript = new GPTScript({disableCache: process.env.DISABLE_CACHE === "true"});
 
             io.on("connection", (socket) => {
                 io.emit("message", "connected");

@@ -4,6 +4,7 @@ import { startAppServer } from '../server/app.mjs';
 import { join, dirname } from "path";
 import { existsSync, mkdirSync } from "fs";
 import fixPath from "fix-path";
+import os from 'os';
 
 const appName = 'Assistant Studio';
 const gatewayUrl = process.env.GATEWAY_URL || 'https://gateway-api.gptscript.ai';
@@ -35,6 +36,7 @@ async function startServer(isPackaged) {
   process.env.WORKSPACE_DIR = process.env.WORKSPACE_DIR || join(dataDir, "workspace");
   process.env.GATEWAY_URL = process.env.GATEWAY_URL || gatewayUrl;
   process.env.DISABLE_CACHE = "true"; // TODO: Remove after https://github.com/gptscript-ai/gptscript/issues/713 is addressed
+  process.env.GPTSCRIPT_DEBUG = "true";
 
   console.log(`Starting app server with GPTSCRIPT_BIN="${process.env.GPTSCRIPT_BIN}"`);
 
@@ -49,10 +51,11 @@ async function startServer(isPackaged) {
 }
 
 function createWindow(url) {
+  const isMac = os.platform() === 'darwin';
   const win = new BrowserWindow({
     width: 1024,
     height: 720,
-    frame: false, // This removes the title bar
+    frame: isMac ? false : true, // Use frame: true for Windows and Linux
     webPreferences: {
       preload: join(app.getAppPath(), "electron/preload.js"),
       nodeIntegration: true,
@@ -62,7 +65,10 @@ function createWindow(url) {
     }
   });
 
-  win.setWindowButtonVisibility(true)
+  // Check if the platform is macOS before calling setWindowButtonVisibility
+  if (isMac) {
+    win.setWindowButtonVisibility(true);
+  }
 
   win.loadURL(url);
   win.webContents.on("did-fail-load", () => win.webContents.reloadIgnoringCache());

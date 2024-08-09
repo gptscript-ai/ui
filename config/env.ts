@@ -12,7 +12,9 @@ let gptscript: GPTScript | null = null;
 
 export function gpt() {
     if (!gptscript) {
-        gptscript = new GPTScript();
+        gptscript = new GPTScript({
+            DefaultModelProvider: 'github.com/gptscript-ai/gateway-provider'
+        });
     }
     return gptscript;
 }

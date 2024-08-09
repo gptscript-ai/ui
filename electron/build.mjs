@@ -42,6 +42,11 @@ const options = {
         target: {
             target: 'nsis',
         },
+        icon: 'electron/icon.ico'
+    },
+    nsis: {
+        deleteAppDataOnUninstall: true,
+        differentialPackage: false
     },
     linux: {
         maintainer: 'Acorn Labs',
@@ -61,7 +66,6 @@ const options = {
     directories: {
         output: 'electron-dist'
     },
-    nsis: {deleteAppDataOnUninstall: true},
     publish: {
         provider: "github",
         publishAutoUpdate: false,
